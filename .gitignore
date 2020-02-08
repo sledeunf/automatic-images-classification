@@ -2,5 +2,6 @@ venv/
 coreldb/
 database/
 .vscode/
+cache/
 __pycache__/
 *.h5
