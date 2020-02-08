@@ -1,0 +1,6 @@
+venv/
+coreldb/
+database/
+.vscode/
+__pycache__/
+*.h5
