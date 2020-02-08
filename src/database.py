@@ -144,5 +144,9 @@ class Database:
 
 
 if __name__ == '__main__':
-    db = Database.create('database', from_folder='coreldb', classes=['pet_dog'])
+    db = Database.create(
+        'database', 
+        from_folder='coreldb', 
+        classes=['pet_cat', 'pet_dog']
+    )
     #generator = db.get_images_generator('train')
