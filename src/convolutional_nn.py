@@ -136,7 +136,7 @@ class CNNClassifier(Sequential):
         
     def confusion_matrix(self, y_true, y_pred, labels=None):
         """
-        Plot confusion matrix using matplotlib
+        Plot confusion matrix using matplotlib and sklearn.
         """
         cmatrix = confusion_matrix(y_true, y_pred, normalize='true')
         display = ConfusionMatrixDisplay(confusion_matrix=cmatrix, display_labels=labels)

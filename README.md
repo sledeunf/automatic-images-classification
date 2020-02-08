@@ -347,7 +347,7 @@ class CNNClassifier(Sequential):
 
     ...
 
-    def classify_test_images(self, database, confusion_matrix=False, separate_miss=False):
+    def classify_test_images(self, database, confusion_matrix=False, separate_miss=True):
         """
         Use trained model to predict classes of images in test/ folder.
         Output theses images in a folder called predictions/
@@ -360,8 +360,29 @@ class CNNClassifier(Sequential):
         # charge la liste des images dans le jeu de test et leurs labels
         test_images = database.get_images_generator('test', shuffle=False)
 
+        # cree un (ou deux) repertoire(s) vides pour stocker les predictions de la classification
+        database.reset_output(miss=separate_miss)
+
         # predit les labels des images du jeu de test
         predictions = argmax(self.predict(test_images), axis=1).numpy()
+        classes = database.classes
+
+        for k in range(len(predictions)):
+            classe = classes[predictions[k]]
+            true_classe, filename = test_images.filenames[k].split('/')
+
+            # copie toutes images dans le repertoire results/<classe predite>
+            shutil.copy(
+                os.path.join(database.path, 'test', test_images.filenames[k]),
+                os.path.join(database.path, 'results', classe, filename)
+            )
+            if separate_miss and true_classe != classe:
+                # copie les echecs de predictions dans le rep. miss/<classe predite>
+                # permet d'analyser les faux positifs
+                shutil.copy(
+                    os.path.join(database.path, 'test', test_images.filenames[k]),
+                    os.path.join(database.path, 'miss', classe, filename)
+                )
 
         # si demande, affiche la matrice de confusion des predictions
         if confusion_matrix:
