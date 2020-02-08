@@ -200,7 +200,62 @@ L'architecture d'un CNN est analogue à celle du schéma de connectivité des ne
 
 ![](https://miro.medium.com/max/1255/1*vkQ0hXDaQv57sALXAJquxA.jpeg)
 
-### Structure du NN utilisé
+### Structure du CNN utilisé
+
+#### Principe des CNN
+
+Les images ont la forme d'une matrice de pixels de taille largeur*hauteur*canaux. Ici, nous utilisons trois canaux : rouge, vert, bleu, c'est pourquoi nous avons une profondeur de 3.
+
+La couche convolutive utilise un ensemble de filtres appris avec l'entraînement. Un filtre est utilisé pour détecter la présence de caractéristiques ou de motifs spécifiques présents dans l'image originale (entrée).  Il est généralement exprimé sous forme de matrice, avec une dimension plus petite mais la même profondeur que le fichier d'entrée.
+
+Une convolution est alors appliqué. Le filtre parcours la largeur et la hauteur du fichier d'entrée, et un produit de points est calculé pour donner une carte d'activation. Ici nous utilisons des fonctions d'activations de type relu (Rectifier Linear Unit). Elle permettent un entrainement rapide et efficace sur de larges jeux de données.
+
+Les données résultantes sont ensuite transmises à travers une couche de pooling. Sa fonction est de réduire progressivement la taille de la représentation pour réduire la quantité de paramètres et de calculs dans le réseau. Ici nous utiliserons des couches de type MaxPooling de taille (2,2).
+
+*Schéma illustrant le principe du max pooling*
+![](https://media.geeksforgeeks.org/wp-content/uploads/20190721025744/Screenshot-2019-07-21-at-2.57.13-AM.png)
+
+#### Implémentation
+
+On défini une classe qui hérite du classifieur
+
+```python
+class CNNClassifier(Sequential):
+    """
+    Simple convolutional network classifier with methods to interract
+    with a local image database.
+    """
+
+    def __init__(self, n_output, target_size=(150, 150)):
+        super(Sequential, self).__init__()
+        self.target_size = target_size
+
+        self.add(Conv2D(32, (3, 3), input_shape=(*target_size, 3)))
+        self.add(Activation('relu'))
+        self.add(MaxPooling2D(pool_size=(2, 2)))
+
+        self.add(Conv2D(32, (3, 3)))
+        self.add(Activation('relu'))
+        self.add(MaxPooling2D(pool_size=(2, 2)))
+
+        self.add(Conv2D(64, (3, 3)))
+        self.add(Activation('relu'))
+        self.add(MaxPooling2D(pool_size=(2, 2)))
+
+        # the model so far outputs 3D feature maps (height, width, features)
+        self.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+        self.add(Dense(64))
+        self.add(Activation('relu'))
+        self.add(Dropout(0.5))
+        self.add(Dense(n_output))
+        self.add(Activation('softmax'))
+
+        self.compile(
+            loss='sparse_categorical_crossentropy',
+            optimizer='adam',
+            metrics=['accuracy']
+        )
+```
 
 ### Entrainement du modèle
 
