@@ -379,36 +379,62 @@ class CNNClassifier(Sequential):
 ```
 
 
-#### Analyse statistiques des résultats
-
-*Matrice de confusion des prédictions*
-|chat vs chien||
-|-|-|
-|![](docs/confusion_cat_vs_dog.png)||
-
-On constate que le modèle fourni des résultats satisfaisant. En effet, il est capable de reconnaitre un chat d'un chien dans environ 90% des cas et commet une erreur dans un peu plus de 10% des cas.
+#### Analyse de quelques exemples
 
 
 #### Quelques exemples
 
-##### Chat VS Chiens
-
 La plupart des images étant classifiées correctement, nous nous intéresserons uniquement aux *faux positifs* et aux *faux négatifs*.
 
-* Chiens classifiés comme étant des chats
+##### Chat VS Chiens
+
+* Matrice de confusion des prédictions
+
+![](docs/confusion_cat_vs_dog.png)
+
+On constate que le modèle fourni des résultats satisfaisant. En effet, il est capable de reconnaitre un chat d'un chien dans environ 90% des cas et commet une erreur dans un peu plus de 10% des cas.
+
+* Images classifiés à tort comme étant des chats
 
 |![](docs/miss/dog1.jpg)|![](docs/miss/dog2.jpg)|![](docs/miss/dog3.jpg)|
 |-|-|-|
 
-    * Le premier de ces chiens est de petite taille et la confusion avec un chat est compréhensible.
-    * Les 2 suivants ont une allure peu commune et le modèle n'a donc probablement eu assez d'exemples pour apprendre à les reconnaitre.
-
-* Chats classifiés comme étant des chiens
+* Images classifiés à tort comme étant des chiens
 
 |![](docs/miss/cat1.jpg)|![](docs/miss/cat2.jpg)|
 |-|-|
 
-    * Le second chat a le poil long et de petites oreilles. Ces caractéristiques sont peu communes chez les chats et là encore l'erreur parait acceptable.
+##### Bonsai VS Doll VS Mask VS Cat VS Cougar
+
+* Matrice de confusion des prédictions
+
+![](docs/confusion_bonsai_doll_mask_cat_cougr.png)
+
+Ici les prédictions sont très bonnes. Comme on aurait pu s'y attendre, le chat est parfois confondu avec le cougar. On explique plus difficilement la confusion entre le chat et le bonsai ou la poupée. L'analyse des erreurs de prédictions nous en apprendra davantage.
+
+* Images classifiées à tort comme étant des chats
+
+|![](docs/miss2/cat1.jpg)||
+|-|-|
+
+* Images classifiées à tort comme étant des cougars
+
+|![](docs/miss2/cougar1.jpg)||
+|-|-|
+
+* Images classifiées à tort comme étant des bonsais
+
+|![](docs/miss2/bonsai1.jpg)|![](docs/miss2/bonsai2.jpg)|
+|-|-|
+
+* Image classifiée à tort comme étant un masque
+
+|![](docs/miss2/mask1.jpg)||
+|-|-|
+
+* Images classifiées à tort comme étant des poupées
+
+**Aucune !**
 
 ## Conclusion
 
