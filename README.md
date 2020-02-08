@@ -88,3 +88,7 @@ L'architecture d'un CNN est analogue à celle du schéma de connectivité des ne
 ### Tests du modèle et évaluation des résultats
 
 ![metrics](docs/metrics.png)
+
+## Usage
+
+create a database

@@ -1,4 +1,9 @@
 import argparse, sys
+
+# disable tensorflow warnings before imports
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 from .database import Database
 
 def parse_args():
