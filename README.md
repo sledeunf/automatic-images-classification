@@ -12,9 +12,9 @@ Pour ce TP, nous nous intéressons à une problématique de classification d'ima
 - la classification basée sur des vecteurs de distances entre les primitives de l'image.
 - la classification par un réseau de neurones convolutif.
 
-## Utilisation
+# Utilisation
 
-### Installation des pré-requis
+## Installation des pré-requis
 
 * python3
 * cloner le projet git / ou le telecharger
@@ -33,6 +33,7 @@ source env/bin/activate
 pip install -r requirements
 ```
 
+# Explications
 ## Préparation des données
 
 Ici les images étudiées proviennent de la base de données Corel. C'est un ensemble d'image provenant d'une galerie photo de même nom, qui ont été labellisés et rangées dans des répertoires portant les noms de ces étiquettes.
