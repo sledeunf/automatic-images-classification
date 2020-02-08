@@ -265,8 +265,151 @@ class CNNClassifier(Sequential):
 
 - Le nombre d'**epochs** est un hyperparamètre qui définit le nombre de fois que l'algorithme d'apprentissage va travailler sur l'ensemble des données d'entrainement. Dans un epoch chaque échantillon de l'ensemble de données d'apprentissage a eu l'occasion de mettre à jour les paramètres internes du modèle. Un epoch est composée d'un ou plusieurs batch(s). Il est courant de créer des tracés linéaires de l'accuracy et du loss en fonction du nombre d'epochs. Ces tracés (courbes d'apprentissage) peuvent aider à diagnostiquer si le modèle a sur-appris, sous-appris, ou s'il est convenablement adapté à l'ensemble de données d'apprentissage.
 
+#### Implémentation d'une méthode d'apprentissage
 
-### Tests du modèle et évaluation des résultats
+Cette méthode prend en paramètre une taille de lot (batch_size) et un nombre d'epochs.
+On peut également passer le paramètre `history` à true pour afficher l'évolution des métriques
+au cours de l'apprentissage en fonction du nombre d'epochs.
 
-![metrics](docs/metrics.png)
+L'exécution de la méthode a pour effet d'entrainer le modèle et de sauvegarder les poids appris dans un fichier `<database>/model_weight.h5`. Si le fichier existe déja, les poids sont chargés et l'apprentissage n'a pas lieu, excepté si le paramètre `overwrite` est passé à `True`.
+
+```python
+class CNNClassifier(Sequential):
+
+    ...
+
+    def train(self, database, batch_size=16, epochs=15, history=False, overwrite=False):
+        """
+        Train model on test subfolder of database
+
+        Parameters:
+            - database: database object defined in this library.
+            - overwrite: allow to overwrite existing training data.
+            - history: if set to true, plot the evolution of metrics over epochs.
+        """
+
+        # si le modele a deja ete entraine, charge les poids existants
+        # sauf si l'utilisateur demande explicitement de l'ecraser
+        if database.weights_exists and not overwrite:
+            self.load_weights(database.weights_filename)
+            print('Weights already existing, skipping training step.')
+            return
+        
+        train_images = database.get_images_generator('train')
+        validation_images = database.get_images_generator('validation')
+
+        # entraine le modele en utilisant les images de train et validation
+        train_history = self.fit(
+            train_images,
+            epochs=epochs,
+            validation_data=validation_images
+        )
+
+        # sauvegarde les poids du modele pour pouvoir les reutiliser plus tard
+        self.save_weights(database.weights_filename)
+
+        if history:
+            self.plot_history(train_history)
+```
+
+#### Résultats de l'entrainement
+
+Après entrainement
+
+```python
+n = len(database) # ici 2 --> {cat, dog}
+model = CNNClassifier(2)
+model.train(database, batch_size=16, epochs=15, history=False, overwrite=False)
+```
+
+![metrics](docs/metrics_cat_vs_dog_v1.png)
+
+Suite à la lecture du graphe précédent, on remarque qu'il y a probablement overfitting à partir de 10 epochs.
+
+On relance donc un nouvel entrainement en réduisant le nombre d'epochs.
+
+```python
+n = len(database) # ici 2 --> {cat, dog}
+model = CNNClassifier(2)
+model.train(database, batch_size=16, epochs=10, history=False, overwrite=False)
+```
+![metrics](docs/metrics_cat_vs_dog_v2.png)
+
+### Prédictions et évaluations
+
+#### Implémentation de la classification d'images
+
+On défini à notre modèle une méthode classify_test_images. Son rôle est de chargé les images labellisées de la base de test, puis de les classer dans le répertoire `<database>/results`. Le paramètre `separate_miss` permet d'écrire également les prédictions dans le répertoire `<database>/miss`. Cela permet d'aller consulter les erreurs de prédictions et de juger de l'acceptabilité de ces erreurs.
+
+
+```python
+class CNNClassifier(Sequential):
+
+    ...
+
+    def classify_test_images(self, database, confusion_matrix=False, separate_miss=False):
+        """
+        Use trained model to predict classes of images in test/ folder.
+        Output theses images in a folder called predictions/
+        Parameter:
+            - database: neural_network.Database object.
+            - separate_miss: if true, create a miss folder to store failed predictions.
+            - confusion_matrix: if true, plot a confusion matrix showing classfication accuracy.
+        """
+
+        # charge la liste des images dans le jeu de test et leurs labels
+        test_images = database.get_images_generator('test', shuffle=False)
+
+        # predit les labels des images du jeu de test
+        predictions = argmax(self.predict(test_images), axis=1).numpy()
+
+        # si demande, affiche la matrice de confusion des predictions
+        if confusion_matrix:
+            self.confusion_matrix(test_images.classes, predictions, labels=database.classes)
+        
+        
+    def confusion_matrix(self, y_true, y_pred, labels=None):
+        """
+        Plot confusion matrix using matplotlib and sklearn.
+        """
+        cmatrix = confusion_matrix(y_true, y_pred, normalize='true')
+        display = ConfusionMatrixDisplay(confusion_matrix=cmatrix, display_labels=labels)
+        display.plot()
+        plt.show()
+```
+
+
+#### Analyse statistiques des résultats
+
+*Matrice de confusion des prédictions*
+|chat vs chien||
+|-|-|
+|![](docs/confusion_cat_vs_dog.png)||
+
+On constate que le modèle fourni des résultats satisfaisant. En effet, il est capable de reconnaitre un chat d'un chien dans environ 90% des cas et commet une erreur dans un peu plus de 10% des cas.
+
+
+#### Quelques exemples
+
+##### Chat VS Chiens
+
+La plupart des images étant classifiées correctement, nous nous intéresserons uniquement aux *faux positifs* et aux *faux négatifs*.
+
+* Chiens classifiés comme étant des chats
+
+|![](docs/miss/dog1.jpg)|![](docs/miss/dog2.jpg)|![](docs/miss/dog3.jpg)|
+|-|-|-|
+
+    * Le premier de ces chiens est de petite taille et la confusion avec un chat est compréhensible.
+    * Les 2 suivants ont une allure peu commune et le modèle n'a donc probablement eu assez d'exemples pour apprendre à les reconnaitre.
+
+* Chats classifiés comme étant des chiens
+
+|![](docs/miss/cat1.jpg)|![](docs/miss/cat2.jpg)|
+|-|-|
+
+    * Le second chat a le poil long et de petites oreilles. Ces caractéristiques sont peu communes chez les chats et là encore l'erreur parait acceptable.
+
+## Conclusion
+
 

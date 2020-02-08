@@ -48,7 +48,22 @@ class Database:
         all_classes = sorted(os.listdir(from_folder), key=lambda x: random())
         # renvoie les n premiers resultats
         return all_classes[:n]
-        
+
+
+    def reset_output(self, miss=False):
+        """
+        Create (after drop if exists) results folders structure
+        """
+        folders = ['results']
+        if miss:
+            folders.append('miss')
+
+        for folder_names in folders:
+            folder = os.path.join(self.path, folder_names)
+            shutil.rmtree(folder, ignore_errors=True)
+            os.makedirs(folder)
+            for classe in self.classes:
+                os.makedirs(os.path.join(folder, classe))
 
     @classmethod
     def create(cls, database_name, from_folder, classes=None, ratios=(0.7, 0.15, 0.15), csv_labels=True):
