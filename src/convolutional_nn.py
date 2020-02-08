@@ -6,7 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.layers import Activation, Dropout, Flatten, Dense
 
-from database import Database
+from .database import Database
 
 
 class CNNClassifier(Sequential):
@@ -46,6 +46,9 @@ class CNNClassifier(Sequential):
         )
 
     def plot_history(self, history):
+        """
+        Plot metrics history in function of epochs after training.
+        """
         for key in history.history.keys():
             plt.plot(history.history[key])
         
@@ -56,14 +59,16 @@ class CNNClassifier(Sequential):
 
     def train(self, database, batch_size=16, epochs=15, history=False, overwrite=False):
         """
+        Train model on test subfolder of database
+
         Parameters:
-            - ...
+            - database: database object defined in this library.
             - overwrite: allow to overwrite existing training data.
             - history: if set to true, plot the evolution of metrics over epochs.
         """
 
-        # if weights exists and user don't want to overwrite
-        # just load previously generated model weights
+        # si le modele a deja ete entraine, charge les poids existants
+        # sauf si l'utilisateur demande explicitement de l'ecraser
         if database.weights_exists and not overwrite:
             self.load_weights(database.weights_filename)
             print('Weights already existing, skipping training step.')
@@ -72,14 +77,15 @@ class CNNClassifier(Sequential):
         train_images = database.get_images_generator('train')
         validation_images = database.get_images_generator('validation')
 
-        train_history = self.fit( # perform model training
+        # entraine le modele en utilisant les images de train et validation
+        train_history = self.fit(
             train_images,
             epochs=epochs,
             validation_data=validation_images
         )
 
-        if save:
-            self.save_weights(database.weights_filename)
+        # sauvegarde les poids du modele pour pouvoir les reutiliser plus tard
+        self.save_weights(database.weights_filename)
 
         if history:
             self.plot_history(train_history)
@@ -95,14 +101,13 @@ class CNNClassifier(Sequential):
             - confusion_matrix: if true, plot a confusion matrix showing classfication accuracy.
         """
 
-        # load test images and don't shuffle it to be able associate results
-        # to original filenames.
+        # charge la liste des images dans le jeu de test et leurs labels
         test_images = database.get_images_generator('test', shuffle=False)
 
-        # predict classes of images in test generator and 
-        # output results as a numpy array.
+        # predit les labels des images du jeu de test
         predictions = argmax(self.predict(test_images), axis=1).numpy()
 
+        # si demande, affiche la matrice de confusion des predictions
         if confusion_matrix:
             self.confusion_matrix(test_images.classes, predictions, labels=database.classes)
         
