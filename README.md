@@ -12,6 +12,26 @@ Pour ce TP, nous nous intéressons à une problématique de classification d'ima
 - la classification basée sur des vecteurs de distances entre les primitives de l'image.
 - la classification par un réseau de neurones convolutif.
 
+## Utilisation
+
+### Installation des pré-requis
+
+* python3
+* cloner le projet git / ou le telecharger
+* puis à la racine du projet :
+
+```bash
+# créer un environnement virtuel (évite les conflits avec des libs existantes)
+virtualenv venv -p python3
+
+# activer l'environnement (linux)
+source env/bin/activate
+# OU sous windows: 
+\venv\Scripts\activate.bat
+
+# installer les dépendances du projet
+pip install -r requirements
+```
 
 ## Préparation des données
 
@@ -194,4 +214,3 @@ L'architecture d'un CNN est analogue à celle du schéma de connectivité des ne
 
 ![metrics](docs/metrics.png)
 
-## Usage
