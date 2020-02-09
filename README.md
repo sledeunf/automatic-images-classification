@@ -16,7 +16,7 @@ Pour ce TP, nous nous intéressons à une problématique de classification d'ima
 
 ## Installation des pré-requis
 
-* python3
+* installer python3
 * cloner le projet git / ou le telecharger
 * puis à la racine du projet :
 
