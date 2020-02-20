@@ -188,9 +188,44 @@ database/
 
 ## Classification d'images basée sur leurs attributs (CBIR)
 
-Nous allons à présent chercher à classifier des images en fonctions de leurs attributs. Pour cela nous nous appuyons sur la librairie suivante :
+Nous allons à présent chercher à classifier des images en fonctions de leurs attributs. Pour cela nous nous appuyons sur la librairie suivante suivante :
 
 https://github.com/pochih/CBIR/
+
+Elle permet en temps normal d'effectuer des requêtes pour extraire les images les plus proches (selon les vecteurs d'attribut) d'une image d'entrée.
+
+Il faut donc modifier le code afin d'extraire les attributs des images d'un jeu d'entrainement. Puis il faut utiliser les résultats de cette extraction afin de prédire les classes d'un ensemble de test.
+
+Ici j'ai implémenté la classification par couleur (color.py), et par bordure (edge.py),
+
+### Classification par couleur
+
+Voici quelques échantillons obtenus avec la classification par couleur.
+
+|Classe|Images prédites|||||
+|-|-|-|-|-|-|
+|pet_cat|![](docs/color/cat/458000.jpg)|![](docs/color/cat/458006.jpg)|![](docs/color/cat/458036.jpg)|![](docs/color/cat/458041.jpg)|
+|pet_dog|![](docs/color/dog/247004.jpg)|![](docs/color/dog/247038.jpg)|![](docs/color/dog/247039.jpg)|![](docs/color/dog/458003.jpg)|
+
+### Classification par détection de bordure
+
+Voici quelques échantillons obtenus avec la classification par bordure
+
+|Classe|Images prédites|||||
+|-|-|-|-|-|-|
+|pet_cat|![](docs/edge/cat/247048.jpg)|![](docs/edge/cat/415034.jpg)|![](docs/edge/cat/458004.jpg)|![](docs/edge/cat/458009.jpg)|
+|pet_dog|![](docs/edge/dog/247025.jpg)|![](docs/edge/dog/247027.jpg)|![](docs/edge/dog/458003.jpg)|![](docs/edge/dog/458081.jpg)|
+
+### Classification par fusion
+
+Voici quelques échantillons obtenus avec la classification par fusion (couleur + bordure)
+
+|Classe|Images prédites|||||
+|-|-|-|-|-|-|
+|pet_cat|![](docs/fusion/cat/458013.jpg)|![](docs/fusion/cat/458041.jpg)|![](docs/fusion/cat/458048.jpg)|![](docs/fusion/cat/659037.jpg)|
+|pet_dog|![](docs/fusion/dog/415075.jpg)|![](docs/fusion/dog/415079.jpg)|![](docs/fusion/dog/415081.jpg)|![](docs/fusion/dog/415084.jpg)|
+
+
 
 ## Classification par un CNN
 
@@ -459,4 +494,8 @@ Ici les prédictions sont très bonnes. Comme on aurait pu s'y attendre, le chat
 
 ## Conclusion
 
+La classification à vecteurs d'attributs très utilisée par le passée donne des résultats satisfaisants mais requiert des connaissances spécifiques à chaque vecteur d'attribut calculé. Elle demande donc une certaine expertise.
 
+La classification par un CNN est plus simple à mettre en oeuvre grâce à l'existence de librairies comme tensorflow, keras, sklearn... Elle donne de meilleurs résultats et nécessite moins d'expertise. Inconvénient: l'entrainement est plus long.
+
+Aujourd'hui, on peut trouver sur le net des architectures hybrides. Par exemple des CNN dont certaines couches (implémentés manuellement) font de la classification à vecteur d'attribut. Il semblerait que cette solution, utilisé à bon escient, donne la classification la plus satisfaisante.

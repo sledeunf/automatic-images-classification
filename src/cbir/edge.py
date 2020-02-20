@@ -187,13 +187,14 @@ class Edge(object):
 
 
 if __name__ == "__main__":
-  db = Database()
+  db_train = Database('database/train')
+  db_test = Database('database/test')
 
   # check shape
   assert edge_kernels.shape == (5, 2, 2)
 
   # evaluate database
-  APs = evaluate_class(db, f_class=Edge, d_type=d_type, depth=depth)
+  APs = evaluate_class(db, db2, f_class=Edge, d_type=d_type, depth=depth)
   cls_MAPs = []
   for cls, cls_APs in APs.items():
     MAP = np.mean(cls_APs)
