@@ -37,7 +37,8 @@ Pour la partie 3 (CNN), un outil en ligne de commande a été développé. Qui s
 
 - récupérer la liste des commandes disponibles
 
-```
+```bash
+# python -m src --help
 usage: __main__.py [-h] {create-database,train-cnn,cnn-classify} ...
 
 positional arguments:
@@ -49,7 +50,8 @@ optional arguments:
 
 - Créer la base de données au format train / validation / test avec les classes séparées dans des sous-répertoires.
 
-```
+```bash
+# python -m src create-database --help
 usage: __main__.py create-database [-h] [--classes [CLASSES [CLASSES ...]]]
                                    --from FROM
 
@@ -62,7 +64,8 @@ optional arguments:
 
 - Entrainer le CNN sur les ensembles de test / validation générés précédemment
 
-```
+```bash
+# python -m src train-cnn --help
 usage: __main__.py train-cnn [-h] [-b BATCH_SIZE] [-e EPOCHS] [--history]
 
 optional arguments:
@@ -76,7 +79,8 @@ optional arguments:
 
 - Test le CNN sur l'ensemble de test généré précédemment
 
-```
+```bash
+# python -m src cnn-classify --help
 usage: __main__.py cnn-classify [-h] [--confusion]
 
 optional arguments:
