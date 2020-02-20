@@ -33,6 +33,57 @@ source env/bin/activate
 pip install -r requirements
 ```
 
+Pour la partie 3 (CNN), un outil en ligne de commande a été développé. Qui s'utilise de la manière suivante :
+
+- récupérer la liste des commandes disponibles
+
+```
+usage: __main__.py [-h] {create-database,train-cnn,cnn-classify} ...
+
+positional arguments:
+  {create-database,train-cnn,cnn-classify}
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+
+- Créer la base de données au format train / validation / test avec les classes séparées dans des sous-répertoires.
+
+```
+usage: __main__.py create-database [-h] [--classes [CLASSES [CLASSES ...]]]
+                                   --from FROM
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --classes [CLASSES [CLASSES ...]]
+                        (optional) specify classes to select in source folder
+  --from FROM           path to the source folder (here coreldb)
+```
+
+- Entrainer le CNN sur les ensembles de test / validation générés précédemment
+
+```
+usage: __main__.py train-cnn [-h] [-b BATCH_SIZE] [-e EPOCHS] [--history]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -b BATCH_SIZE, --batch_size BATCH_SIZE
+                        batch size
+  -e EPOCHS, --epochs EPOCHS
+                        epochs
+  --history             plot training history
+```
+
+- Test le CNN sur l'ensemble de test généré précédemment
+
+```
+usage: __main__.py cnn-classify [-h] [--confusion]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --confusion  plot confusion matrix after testing
+```
+
 # Explications
 ## Préparation des données
 
